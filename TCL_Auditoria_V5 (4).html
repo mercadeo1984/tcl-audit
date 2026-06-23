@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TCL Retail Audit Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E8212E;--red2:#B91C27;--bg:#F7F9FC;--white:#FFFFFF;--dark:#0A0F1A;
+  --card:rgba(255,255,255,0.9);--border:rgba(0,0,0,0.07);--b2:rgba(0,0,0,0.12);
+  --text:#1A2235;--soft:#4A5568;--muted:#8A96A8;--gold:#D97706;--green:#16A34A;--orange:#EA580C;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 65% 45% at 85% 15%,rgba(210,215,230,0.5) 0%,transparent 65%),
+  linear-gradient(160deg,#ffffff 0%,#EEF1F8 50%,#E6EAF4 100%)}
+body::after{content:'';position:fixed;top:0;right:-5%;width:65%;height:100%;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='900' viewBox='0 0 600 900'%3E%3Cg fill='none' stroke='%23C8D0E0' stroke-width='0.7' opacity='0.5'%3E%3Cpath d='M600,0 Q380,220 340,460 Q300,700 240,900'/%3E%3Cpath d='M630,0 Q410,220 370,460 Q330,700 270,900'/%3E%3Cpath d='M660,0 Q440,220 400,460 Q360,700 300,900'/%3E%3Cpath d='M690,0 Q470,220 430,460 Q390,700 330,900'/%3E%3Cpath d='M720,0 Q500,220 460,460 Q420,700 360,900'/%3E%3Cpath d='M750,0 Q530,220 490,460 Q450,700 390,900'/%3E%3Cpath d='M780,0 Q560,220 520,460 Q480,700 420,900'/%3E%3Cpath d='M810,0 Q590,220 550,460 Q510,700 450,900'/%3E%3Cpath d='M840,0 Q620,220 580,460 Q540,700 480,900'/%3E%3Cpath d='M870,0 Q650,220 610,460 Q570,700 510,900'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover;background-repeat:no-repeat}
+*{position:relative;z-index:1}
+input,select,textarea,button{font-family:'Poppins',sans-serif}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px}
+option{background:#fff;color:var(--text)}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:2px solid var(--red);padding:0 18px;box-shadow:0 2px 20px rgba(0,0,0,0.07)}
+.hdr-in{max-width:700px;margin:0 auto;height:56px;display:flex;align-items:center;gap:12px}
+.logo{background:var(--red);color:#fff;font-weight:900;font-size:13px;padding:4px 9px;border-radius:4px;letter-spacing:1.5px;flex-shrink:0}
+.hdr-t{flex:1}.hdr-t h1{font-size:14px;font-weight:700;color:var(--dark)}.hdr-t p{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
+.hdr-sc{background:rgba(232,33,46,0.08);border:1.5px solid rgba(232,33,46,0.25);border-radius:9px;padding:4px 13px;text-align:center}
+.hdr-sc-n{font-size:19px;font-weight:800;color:var(--red);line-height:1}
+.hdr-sc-l{font-size:8px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* PROGRESS */
+.pgw{position:sticky;top:56px;z-index:99;background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:7px 18px}
+.pgi{max-width:700px;margin:0 auto}
+.pgm{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);font-weight:600;margin-bottom:5px}
+.pgt{height:3px;background:rgba(0,0,0,0.07);border-radius:2px;overflow:hidden}
+.pgf{height:100%;background:linear-gradient(90deg,var(--red),#ff6b35,#F59E0B);border-radius:2px;transition:width .5s ease}
+
+/* MAIN */
+.main{max-width:700px;margin:0 auto;padding:18px 14px 140px}
+.slabel{font-size:8px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:2.5px;margin:26px 0 9px;display:flex;align-items:center;gap:10px}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(232,33,46,.3),transparent)}
+
+/* CARD — cada sección es independiente, toggle propio */
+.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;margin-bottom:9px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.05);transition:border-color .2s,box-shadow .2s}
+.card.open{border-color:rgba(232,33,46,0.22);box-shadow:0 4px 24px rgba(232,33,46,0.08)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none;gap:10px}
+.ch:hover{background:rgba(0,0,0,0.015)}
+.chl{display:flex;align-items:center;gap:11px}
+.cnum{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(0,0,0,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);transition:.2s}
+.card.open .cnum{background:var(--red);color:#fff;border-color:var(--red)}
+.ctit{font-size:13px;font-weight:600;color:var(--dark)}
+.csub{font-size:10px;font-weight:400;color:var(--muted);margin-top:1px}
+.carr{color:var(--muted);font-size:13px;flex-shrink:0;transition:transform .22s;margin-left:auto}
+.card.open .carr{transform:rotate(180deg);color:var(--red)}
+.cb{display:none;padding:4px 16px 18px;border-top:1px solid var(--border)}
+.card.open .cb{display:block}
+
+/* FIELDS */
+.field{margin-top:14px}
+.fl{display:block;font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.req{color:var(--red)}
+.fi,.fs,.fta{width:100%;background:rgba(255,255,255,0.9);border:1px solid rgba(0,0,0,0.1);border-radius:8px;color:var(--text);padding:10px 13px;font-size:13px;font-weight:400;font-family:'Poppins',sans-serif;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
+.fs{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A96A8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;cursor:pointer;background-color:rgba(255,255,255,0.9)}
+.fta{resize:vertical;min-height:68px;line-height:1.6}
+.fi:focus,.fs:focus,.fta:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(232,33,46,.1);background:#fff}
+.fi::placeholder,.fta::placeholder{color:var(--muted);font-weight:300;font-size:12px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:490px){.r2{grid-template-columns:1fr}}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chip{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid rgba(0,0,0,0.1);background:rgba(255,255,255,0.8);color:var(--soft);cursor:pointer;transition:all .15s;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;line-height:1.2}
+.chip:hover{border-color:rgba(232,33,46,0.4);color:var(--red);background:rgba(232,33,46,0.04)}
+.chip.sr{background:var(--red) !important;border-color:var(--red) !important;color:#fff !important;font-weight:600}
+.chip.sm{background:rgba(232,33,46,0.1) !important;border-color:rgba(232,33,46,0.4) !important;color:var(--red) !important;font-weight:600}
+
+/* SLIDERS */
+.sg{margin-top:14px}
+.srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px}
+.sname{font-size:12px;font-weight:500;color:var(--text);line-height:1.4}
+.sval{background:rgba(0,0,0,0.06);border-radius:6px;padding:2px 10px;font-size:14px;font-weight:700;min-width:34px;text-align:center;flex-shrink:0}
+input[type=range]{width:100%;height:5px;border-radius:3px;border:none;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background:rgba(0,0,0,0.08)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--red);cursor:pointer;box-shadow:0 0 0 4px rgba(232,33,46,.15),0 2px 6px rgba(232,33,46,.3);transition:transform .1s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15)}
+.shints{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:4px;font-weight:500}
+.sdiv{height:1px;background:var(--border);margin:16px 0 6px}
+.stitle{font-size:9px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1.2px;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(232,33,46,.12)}
+
+/* SOS */
+.sos-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.sos-item label{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:4px}
+.sos-item input{width:100%;background:rgba(255,255,255,0.9);border:1px solid rgba(0,0,0,0.1);border-radius:8px;color:var(--text);padding:9px 12px;font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;-webkit-appearance:none;text-align:center}
+.sos-item input:focus{outline:none;border-color:var(--red)}
+.sos-custom-row{display:flex;gap:6px;align-items:center;margin-top:8px}
+.sos-custom-row .brand-name{flex:2;padding:9px 12px;font-size:12px;text-align:left}
+.sos-custom-row .brand-qty{flex:1;padding:9px 12px;font-size:14px;font-weight:700;text-align:center}
+.sos-add-btn{width:100%;margin-top:10px;padding:9px;background:rgba(232,33,46,0.05);border:1.5px dashed rgba(232,33,46,0.3);border-radius:9px;font-size:12px;font-weight:600;color:var(--red);cursor:pointer;font-family:'Poppins',sans-serif;transition:background .15s}
+.sos-add-btn:hover{background:rgba(232,33,46,0.1)}
+.sos-result{background:rgba(217,119,6,0.07);border:1px solid rgba(217,119,6,0.2);border-radius:10px;padding:13px 16px;margin-top:12px;display:flex;align-items:center;justify-content:space-between}
+.sos-pct{font-size:28px;font-weight:900;color:var(--gold)}
+.sos-lv{font-size:11px;color:var(--gold);font-weight:600;margin-top:3px}
+
+/* PHOTOS */
+.photo-drop{border:2px dashed rgba(232,33,46,0.3);border-radius:12px;padding:22px;text-align:center;cursor:pointer;background:rgba(232,33,46,0.02);transition:all .2s;margin-top:8px}
+.photo-drop:hover{border-color:rgba(232,33,46,0.6);background:rgba(232,33,46,0.05)}
+.photo-drop-icon{font-size:30px;margin-bottom:8px}
+.photo-drop-text{font-size:13px;font-weight:600;color:var(--soft)}
+.photo-drop-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:9px;overflow:hidden;background:rgba(0,0,0,0.05)}
+.photo-thumb img,.photo-thumb video{width:100%;height:100%;object-fit:cover}
+.photo-del{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(220,38,38,0.9);border:none;border-radius:50%;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.upload-note{font-size:10px;color:var(--muted);margin-top:7px;text-align:center;font-weight:500}
+
+/* SCORE PREVIEW */
+.score-prev{background:rgba(232,33,46,0.04);border:1px solid rgba(232,33,46,.18);border-radius:12px;overflow:hidden;margin-top:20px}
+.sp-top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:12px}
+.sp-lbl{font-size:12px;font-weight:600;color:var(--soft)}
+.sp-sub{font-size:9px;color:var(--muted);margin-top:2px}
+.sp-num-wrap{text-align:right}
+.sp-num{font-size:38px;font-weight:900}
+.sp-max{font-size:11px;color:var(--muted)}
+.sp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid rgba(232,33,46,.1)}
+@media(max-width:480px){.sp-grid{grid-template-columns:repeat(2,1fr)}}
+.sp-cat{padding:8px 10px;text-align:center;border-right:1px solid rgba(232,33,46,.08)}
+.sp-cat:last-child,.sp-cat:nth-child(4n){border-right:none}
+.sp-cat-n{font-size:8px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.sp-cat-v{font-size:13px;font-weight:800;margin-top:2px}
+
+/* BOTTOM */
+.bot{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(232,33,46,.15);padding:11px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.07)}
+.bot-in{max-width:700px;margin:0 auto;display:flex;gap:9px}
+.btn{flex:1;padding:14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Poppins',sans-serif;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(.98)}
+.btn-ghost{background:rgba(0,0,0,0.06);color:var(--text);border:1px solid var(--b2);flex:0 0 auto;padding:14px 18px}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 4px 18px rgba(232,33,46,.3)}
+.btn-green{background:#16a34a;color:#fff;box-shadow:0 4px 18px rgba(22,163,74,.25)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);overflow-y:auto;padding:14px;align-items:flex-start;justify-content:center}
+.ov.show{display:flex}
+.modal{background:var(--white);border:1px solid rgba(0,0,0,.08);border-radius:16px;width:100%;max-width:620px;margin:auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mhdr{background:linear-gradient(135deg,var(--red2),var(--red));padding:18px 22px;display:flex;align-items:center;justify-content:space-between}
+.mhdr h2{font-size:16px;font-weight:800;color:#fff}
+.mclose{width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.2);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mbody{padding:22px}
+
+/* Modal hero */
+.m-hero{display:flex;gap:16px;align-items:center;background:#F8F9FB;border-radius:12px;padding:16px;margin-bottom:18px}
+.ring-c{width:90px;height:90px;border-radius:50%;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid var(--red);background:rgba(232,33,46,.05)}
+.ring-n{font-size:30px;font-weight:900;line-height:1}
+.ring-d{font-size:9px;color:var(--muted)}
+.m-hero-info{flex:1}
+.ring-lv{font-size:18px;font-weight:800}
+.ring-loc{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.6}
+.m-prog{height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden;margin-top:8px}
+.m-prog-fill{height:100%;border-radius:3px}
+
+.msec{margin-bottom:16px}
+.msec-t{font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.msec-t::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Score cards grid */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:400px){.sc-grid{grid-template-columns:1fr}}
+.sc-card{background:#F8F9FB;border:1px solid var(--border);border-radius:9px;padding:10px 12px}
+.sc-card-name{font-size:10px;color:var(--muted);font-weight:500;margin-bottom:5px}
+.sc-bar-t{height:4px;background:rgba(0,0,0,0.07);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.sc-bar-f{height:100%;border-radius:2px}
+.sc-bottom{display:flex;justify-content:space-between;align-items:center}
+.sc-val{font-size:15px;font-weight:800}
+.sc-pts{font-size:9px;color:var(--muted)}
+
+/* Conclusion */
+.m-concl{background:rgba(232,33,46,.04);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:14px}
+.m-concl h4{font-size:8px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.m-concl p{font-size:12px;line-height:1.75;color:var(--soft)}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+@media(max-width:400px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+.kpi-box{background:#F8F9FB;border:1px solid var(--border);border-radius:9px;padding:10px 11px}
+.kpi-label{font-size:8px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.kpi-val{font-size:12px;font-weight:700;color:var(--dark)}
+
+/* Action cards */
+.action-cards{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.a-card{display:flex;gap:12px;background:#F8F9FB;border:1px solid var(--border);border-radius:10px;padding:12px 14px;align-items:flex-start}
+.a-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0}
+.a-num.p1{background:var(--red)}.a-num.p2{background:var(--orange)}.a-num.p3{background:var(--gold)}
+.a-body{flex:1}
+.a-title{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:3px}
+.a-desc{font-size:11px;color:var(--soft);line-height:1.55}
+.a-tags{margin-top:5px;display:flex;gap:5px;flex-wrap:wrap}
+.a-tag{font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+.a-tag.cat{background:rgba(232,33,46,0.08);color:var(--red)}
+.a-tag.urg{background:rgba(0,0,0,0.06);color:var(--muted)}
+
+.mact{display:flex;gap:9px}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.2);z-index:300;white-space:nowrap;opacity:0;transition:opacity .22s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="logo">TCL</span>
+    <div class="hdr-t"><h1>Retail Audit Pro</h1><p>Trade Marketing · HVAC · Copper Group</p></div>
+    <div class="hdr-sc"><div class="hdr-sc-n" id="hScore">—</div><div class="hdr-sc-l">Score /100</div></div>
+  </div>
+</header>
+
+<div class="pgw"><div class="pgi">
+  <div class="pgm"><span id="pgLbl">0 de 11 secciones completadas</span><span id="pgPct">0%</span></div>
+  <div class="pgt"><div class="pgf" id="pgFill" style="width:0%"></div></div>
+</div></div>
+
+<main class="main">
+
+<!-- ── S1: DATOS GENERALES ── -->
+<div class="slabel">01 · Datos generales</div>
+<div class="card open" id="c1">
+  <div class="ch" onclick="tog('c1')">
+    <div class="chl"><div class="cnum" id="n1">1</div>
+      <div><div class="ctit">Identificación de la visita</div><div class="csub">País, retailer, sucursal y auditor</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <!-- País -->
+    <div class="r2">
+      <div class="field">
+        <label class="fl">País <span class="req">*</span></label>
+        <select class="fs" id="pais" onchange="onPais()">
+          <option value="">Selecciona</option>
+          <option value="panama">Panamá</option>
+          <option value="costarica">Costa Rica</option>
+          <option value="elsalvador">El Salvador</option>
+          <option value="guatemala">Guatemala</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="fl">Ciudad <span class="req">*</span></label>
+        <input class="fi" type="text" id="ciudad" placeholder="ej. Ciudad de Panamá" oninput="update()">
+      </div>
+    </div>
+    <div class="field" id="wrap-otro-pais" style="display:none">
+      <label class="fl">¿Cuál país?</label>
+      <input class="fi" type="text" id="otro_pais" placeholder="Nombre del país" oninput="update()">
+    </div>
+
+    <!-- Retailer dinámico -->
+    <div class="field">
+      <label class="fl">Retailer <span class="req">*</span></label>
+      <select class="fs" id="retailer" onchange="onRetailer()">
+        <option value="">— Selecciona un país primero —</option>
+      </select>
+    </div>
+    <div class="field" id="wrap-otro-retailer" style="display:none">
+      <label class="fl">Nombre del retailer <span class="req">*</span></label>
+      <input class="fi" type="text" id="otro_retailer" placeholder="ej. Electro Center, Almacenes X..." oninput="update()">
+    </div>
+
+    <!-- Sucursal dinámica -->
+    <div class="field">
+      <label class="fl">Sucursal <span class="req">*</span></label>
+      <select class="fs" id="sucursal_sel" onchange="onSucursal()">
+        <option value="">— Selecciona un retailer primero —</option>
+      </select>
+    </div>
+    <div class="field" id="wrap-otra-sucursal" style="display:none">
+      <label class="fl">Nombre de la sucursal <span class="req">*</span></label>
+      <input class="fi" type="text" id="otra_sucursal" placeholder="ej. Multiplaza, Centro Comercial..." oninput="update()">
+    </div>
+
+    <!-- Resto de datos -->
+    <div class="r2">
+      <div class="field">
+        <label class="fl">Auditor <span class="req">*</span></label>
+        <input class="fi" type="text" id="auditor" placeholder="Tu nombre completo" oninput="update()">
+      </div>
+      <div class="field">
+        <label class="fl">Tipo de visita</label>
+        <select class="fs" id="tipo_visita">
+          <option value="">Selecciona</option>
+          <option>Auditoría regular</option><option>Activación</option>
+          <option>Seguimiento</option><option>Lanzamiento</option><option>Visita correctiva</option>
+        </select>
+      </div>
+    </div>
+    <div class="r2">
+      <div class="field"><label class="fl">Fecha</label><input class="fi" type="date" id="fecha"></div>
+      <div class="field"><label class="fl">Hora</label><input class="fi" type="time" id="hora"></div>
+    </div>
+    <div class="field"><label class="fl">Tráfico en tienda</label><div class="chips" id="chips-trafico"></div></div>
+    <div class="field">
+      <label class="fl">Zona exacta del exhibidor TCL</label>
+      <input class="fi" type="text" id="zona_tcl" placeholder="ej. Pasillo central piso 2, junto a caja...">
+    </div>
+    <div class="field">
+      <label class="fl">Número de vendedores (área A/C)</label>
+      <input class="fi" type="number" id="num_vendedores" min="0" placeholder="ej. 3">
+    </div>
+  </div>
+</div>
+
+<!-- ── S2: VISIBILIDAD ── -->
+<div class="slabel">02 · Visibilidad y exhibición</div>
+<div class="card" id="c2">
+  <div class="ch" onclick="tog('c2')">
+    <div class="chl"><div class="cnum" id="n2">2</div>
+      <div><div class="ctit">Visibilidad de marca</div><div class="csub">Peso: 15 pts — ¿TCL se ve y se siente presente?</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="sg"><div class="srow"><span class="sname">¿TCL se ve desde lejos al entrar?</span><span class="sval" id="d_v1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="v1" oninput="sl('v1','d_v1')">
+      <div class="shints"><span>Invisible</span><span>Muy visible</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">¿El exhibidor está en flujo principal?</span><span class="sval" id="d_v2">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="v2" oninput="sl('v2','d_v2')">
+      <div class="shints"><span>Zona fría / escondido</span><span>Flujo ideal</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">Logos TCL: limpios, legibles, color correcto</span><span class="sval" id="d_v3">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="v3" oninput="sl('v3','d_v3')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Iluminación: destaca y favorece a TCL</span><span class="sval" id="d_v4">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="v4" oninput="sl('v4','d_v4')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Branding comunica: tecnología + ahorro + confianza</span><span class="sval" id="d_v5">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="v5" oninput="sl('v5','d_v5')"></div>
+    <div class="field"><label class="fl">Ubicación del exhibidor</label><div class="chips" id="chips-ubic"></div></div>
+    <div class="field"><label class="fl">¿Qué marca domina visualmente la categoría?</label><div class="chips" id="chips-compvis"></div></div>
+    <div class="field"><label class="fl">Observaciones de visibilidad</label>
+      <textarea class="fta" id="obs_vis" placeholder="¿Hay columnas, competidores o barreras físicas que tapen a TCL?"></textarea></div>
+  </div>
+</div>
+
+<!-- ── S3: EXHIBIDOR ── -->
+<div class="card" id="c3">
+  <div class="ch" onclick="tog('c3')">
+    <div class="chl"><div class="cnum" id="n3">3</div>
+      <div><div class="ctit">Estado del exhibidor</div><div class="csub">Peso: 10 pts — Condición física y percepción</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">Estado físico (marca todo lo que aplique)</label><div class="chips" id="chips-exhib"></div></div>
+    <div class="sg" style="margin-top:14px"><div class="srow"><span class="sname">Limpieza y orden general</span><span class="sval" id="d_e1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="e1" oninput="sl('e1','d_e1')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Estado físico (sin golpes, óxido ni deterioro)</span><span class="sval" id="d_e2">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="e2" oninput="sl('e2','d_e2')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Percepción premium y profesional</span><span class="sval" id="d_e3">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="e3" oninput="sl('e3','d_e3')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Completitud: todos los equipos y etiquetas presentes</span><span class="sval" id="d_e4">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="e4" oninput="sl('e4','d_e4')"></div>
+    <div class="field"><label class="fl">¿Equipos encendidos / en demo?</label><div class="chips" id="chips-demo"></div></div>
+    <div class="field"><label class="fl">¿Los equipos tienen sticker de precio visible?</label><div class="chips" id="chips-sticker"></div></div>
+  </div>
+</div>
+
+<!-- ── S4: POP ── -->
+<div class="slabel">03 · Comunicación en PDV</div>
+<div class="card" id="c4">
+  <div class="ch" onclick="tog('c4')">
+    <div class="chl"><div class="cnum" id="n4">4</div>
+      <div><div class="ctit">POP y comunicación</div><div class="csub">Peso: 10 pts — ¿Qué comunica TCL sin hablar?</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">Materiales presentes en el PDV</label><div class="chips" id="chips-pop"></div></div>
+    <div class="sg" style="margin-top:14px"><div class="srow"><span class="sname">Claridad del mensaje al cliente</span><span class="sval" id="d_p1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="p1" oninput="sl('p1','d_p1')">
+      <div class="shints"><span>Confuso / sin mensaje</span><span>Muy claro</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">Estado y visibilidad del material</span><span class="sval" id="d_p2">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="p2" oninput="sl('p2','d_p2')">
+      <div class="shints"><span>Dañado / oculto</span><span>Perfecto / muy visible</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">Diferenciación vs material de competencia</span><span class="sval" id="d_p3">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="p3" oninput="sl('p3','d_p3')"></div>
+    <div class="field"><label class="fl">Principal beneficio comunicado</label><div class="chips" id="chips-benefit"></div></div>
+    <div class="field"><label class="fl">¿Hay QR visible y funcional?</label><div class="chips" id="chips-qr"></div></div>
+    <div class="field"><label class="fl">¿Qué mensaje del POP llama más la atención?</label>
+      <input class="fi" type="text" id="pop_msg" placeholder="ej. Ahorro 60%, WiFi integrado, autolimpieza..."></div>
+  </div>
+</div>
+
+<!-- ── S5: SHARE OF SHELF ── -->
+<div class="card" id="c5">
+  <div class="ch" onclick="tog('c5')">
+    <div class="chl"><div class="cnum" id="n5">5</div>
+      <div><div class="ctit">Share of Shelf</div><div class="csub">Espacio y equipos exhibidos por marca</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">Unidades exhibidas por marca</label>
+      <div class="sos-grid">
+        <div class="sos-item"><label>TCL</label><input type="number" id="sos_tcl" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Samsung</label><input type="number" id="sos_samsung" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>LG</label><input type="number" id="sos_lg" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Midea</label><input type="number" id="sos_midea" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Hisense</label><input type="number" id="sos_hisense" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>RCA</label><input type="number" id="sos_rca" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Sankey</label><input type="number" id="sos_sankey" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Panonic</label><input type="number" id="sos_panonic" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Mystic</label><input type="number" id="sos_mystic" min="0" value="0" oninput="calcSOS()"></div>
+        <div class="sos-item"><label>Panasonic</label><input type="number" id="sos_panasonic" min="0" value="0" oninput="calcSOS()"></div>
+      </div>
+      <!-- Marcas adicionales -->
+      <div id="sos-extra"></div>
+      <button class="sos-add-btn" type="button" onclick="addSOS()">+ Agregar otra marca</button>
+    </div>
+    <div class="field"><label class="fl">Metros lineales TCL (estimado)</label>
+      <input class="fi" type="number" id="ml_tcl" min="0" step="0.5" placeholder="ej. 3.5"></div>
+    <div class="sos-result">
+      <div><div style="font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Share TCL estimado</div>
+        <div class="sos-lv" id="sos-lv">Ingresa datos</div></div>
+      <div class="sos-pct" id="sos-pct">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S6: COMPETENCIA ── -->
+<div class="slabel">04 · Competencia</div>
+<div class="card" id="c6">
+  <div class="ch" onclick="tog('c6')">
+    <div class="chl"><div class="cnum" id="n6">6</div>
+      <div><div class="ctit">Análisis competitivo</div><div class="csub">Peso: 10 pts — ¿Qué hace mejor la competencia?</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">Marcas más fuertes en esta sucursal</label><div class="chips" id="chips-marcas"></div></div>
+    <div class="field"><label class="fl">¿Qué tiene mejor la competencia?</label><div class="chips" id="chips-cventaja"></div></div>
+    <div class="field"><label class="fl">Promociones activas de la competencia</label><div class="chips" id="chips-cprom"></div></div>
+    <div class="sg" style="margin-top:14px"><div class="srow"><span class="sname">Posición TCL vs competencia en esta sucursal</span><span class="sval" id="d_comp">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="comp_s" oninput="sl('comp_s','d_comp')">
+      <div class="shints"><span>Competencia domina</span><span>TCL domina</span></div></div>
+    <div class="field"><label class="fl">Insight sobre competencia</label>
+      <textarea class="fta" id="obs_comp" placeholder="ej. LG domina por financiamiento visible y promotor fijo los fines de semana..."></textarea></div>
+  </div>
+</div>
+
+<!-- ── S7: CLIENTE ── -->
+<div class="slabel">05 · Experiencia en piso</div>
+<div class="card" id="c7">
+  <div class="ch" onclick="tog('c7')">
+    <div class="chl"><div class="cnum" id="n7">7</div>
+      <div><div class="ctit">Experiencia del cliente</div><div class="csub">Peso: 10 pts — Comportamiento e interacción</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">¿Los clientes se detienen frente a TCL?</label><div class="chips" id="chips-detiene"></div></div>
+    <div class="field"><label class="fl">Tiempo promedio de interacción</label><div class="chips" id="chips-tiempo"></div></div>
+    <div class="field"><label class="fl">¿Qué llama más la atención?</label><div class="chips" id="chips-atrac"></div></div>
+    <div class="field"><label class="fl">¿Interactúan / tocan los equipos?</label><div class="chips" id="chips-toca"></div></div>
+    <div class="sg" style="margin-top:14px"><div class="srow"><span class="sname">Nivel de interacción general con TCL</span><span class="sval" id="d_cl1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="cl1" oninput="sl('cl1','d_cl1')">
+      <div class="shints"><span>Sin interacción</span><span>Muy alta</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">Entendimiento del beneficio por parte del cliente</span><span class="sval" id="d_cl2">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="cl2" oninput="sl('cl2','d_cl2')">
+      <div class="shints"><span>No entienden</span><span>Comprenden bien</span></div></div>
+  </div>
+</div>
+
+<!-- ── S8: VENDEDOR ── -->
+<div class="card" id="c8">
+  <div class="ch" onclick="tog('c8')">
+    <div class="chl"><div class="cnum" id="n8">8</div>
+      <div><div class="ctit">Experiencia del vendedor</div><div class="csub">Peso: 20 pts — Conocimiento y activación de TCL</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">¿Recomienda TCL proactivamente?</label><div class="chips" id="chips-vrec"></div></div>
+    <div class="field"><label class="fl">¿Qué temas sabe explicar bien?</label><div class="chips" id="chips-vsabe"></div></div>
+    <div class="field"><label class="fl">Modelo TCL que recomienda más</label>
+      <input class="fi" type="text" id="vend_modelo" placeholder="ej. BreezeIN AI 18,000 BTU"></div>
+    <div class="field"><label class="fl">¿Qué marca prefiere vender y por qué?</label>
+      <input class="fi" type="text" id="vend_prefer" placeholder="ej. LG por mayor comisión y más argumentos"></div>
+    <div class="field"><label class="fl">Objeciones que recibe sobre TCL</label>
+      <textarea class="fta" id="vend_obj" placeholder="ej. No la conocen, dudan del servicio técnico..."></textarea></div>
+    <div class="field"><label class="fl">¿Qué necesita para vender TCL mejor?</label>
+      <textarea class="fta" id="vend_info" placeholder="ej. Script de ahorro, material comparativo, muestras..."></textarea></div>
+    <div class="sg" style="margin-top:4px"><div class="srow"><span class="sname">Conocimiento del producto TCL</span><span class="sval" id="d_vn1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="vn1" oninput="sl('vn1','d_vn1')">
+      <div class="shints"><span>Desconoce TCL</span><span>Experto</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">Disposición activa a vender TCL</span><span class="sval" id="d_vn2">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="vn2" oninput="sl('vn2','d_vn2')">
+      <div class="shints"><span>Evita TCL</span><span>Lo prioriza</span></div></div>
+    <div class="sg"><div class="srow"><span class="sname">Manejo de objeciones sobre TCL</span><span class="sval" id="d_vn3">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="vn3" oninput="sl('vn3','d_vn3')">
+      <div class="shints"><span>No sabe responder</span><span>Excelente</span></div></div>
+  </div>
+</div>
+
+<!-- ── S9: PRECIO & STOCK ── -->
+<div class="slabel">06 · Precio, stock y cierre</div>
+<div class="card" id="c9">
+  <div class="ch" onclick="tog('c9')">
+    <div class="chl"><div class="cnum" id="n9">9</div>
+      <div><div class="ctit">Precio, financiamiento y stock</div><div class="csub">Peso: 15 pts — Disponibilidad y valor comunicado</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="stitle">Pricing y financiamiento</div>
+    <div class="field"><label class="fl">¿Qué está presente en el PDV?</label><div class="chips" id="chips-pricing"></div></div>
+    <div class="sg" style="margin-top:14px"><div class="srow"><span class="sname">Claridad y competitividad percibida del precio</span><span class="sval" id="d_pr1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="pr1" oninput="sl('pr1','d_pr1')">
+      <div class="shints"><span>Confuso / caro</span><span>Claro y competitivo</span></div></div>
+    <div class="sdiv"></div>
+    <div class="stitle">Stock y disponibilidad</div>
+    <div class="field"><label class="fl">Disponibilidad inmediata</label><div class="chips" id="chips-stock"></div></div>
+    <div class="field"><label class="fl">Modelos disponibles en tienda</label>
+      <input class="fi" type="text" id="stock_disp" placeholder="ej. SaveIN AI 12K, BreezeIN AI 18K..."></div>
+    <div class="field"><label class="fl">Modelos agotados / sin stock</label>
+      <input class="fi" type="text" id="stock_ago" placeholder="ej. Elite AI 24K..."></div>
+    <div class="field"><label class="fl">Modelo más consultado por clientes</label>
+      <input class="fi" type="text" id="stock_top" placeholder="ej. SaveIN AI 18,000 BTU"></div>
+    <div class="field"><label class="fl">¿Ofrecen instalación? ¿Tiempo de entrega?</label>
+      <input class="fi" type="text" id="instalacion" placeholder="ej. Sí, 24-48 horas / No ofrecen"></div>
+  </div>
+</div>
+
+<!-- ── S10: OBJECIONES ── -->
+<div class="card" id="c10">
+  <div class="ch" onclick="tog('c10')">
+    <div class="chl"><div class="cnum" id="n10">10</div>
+      <div><div class="ctit">Objeciones, motivos y activaciones</div><div class="csub">Barreras y oportunidades detectadas</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="stitle">Objeciones frecuentes detectadas</div>
+    <div class="chips" id="chips-obj"></div>
+    <div class="field"><label class="fl">Objeción principal (la que más frena la venta)</label>
+      <input class="fi" type="text" id="obj_principal" placeholder="Escribe la más repetida"></div>
+    <div class="sdiv"></div>
+    <div class="stitle">Principales motivos de compra detectados</div>
+    <div class="chips" id="chips-motivos"></div>
+    <div class="sdiv"></div>
+    <div class="stitle">Activaciones recomendadas para esta sucursal</div>
+    <div class="chips" id="chips-act"></div>
+    <div class="field"><label class="fl">Zona con mayor potencial de activación</label>
+      <input class="fi" type="text" id="act_zona" placeholder="ej. Área de entrada, frente al pasillo central..."></div>
+    <div class="sdiv"></div>
+    <div class="stitle">Ambiente general de la tienda</div>
+    <div class="sg"><div class="srow"><span class="sname">Iluminación general</span><span class="sval" id="d_a1">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="a1" oninput="sl('a1','d_a1')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Orden y saturación visual del pasillo</span><span class="sval" id="d_a2">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="a2" oninput="sl('a2','d_a2')"></div>
+    <div class="sg"><div class="srow"><span class="sname">Flujo de clientes en la zona TCL</span><span class="sval" id="d_a3">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="a3" oninput="sl('a3','d_a3')"></div>
+  </div>
+</div>
+
+<!-- ── S11: FOTOS Y COMENTARIOS ── -->
+<div class="slabel">07 · Evidencia y cierre</div>
+<div class="card" id="c11">
+  <div class="ch" onclick="tog('c11')">
+    <div class="chl"><div class="cnum" id="n11">11</div>
+      <div><div class="ctit">Fotos, videos y comentarios</div><div class="csub">Evidencia visual de la auditoría</div></div>
+    </div><span class="carr">▾</span>
+  </div>
+  <div class="cb">
+    <div class="field"><label class="fl">Fotos y videos de la visita</label>
+      <div class="photo-drop" onclick="document.getElementById('photo-input').click()">
+        <input type="file" id="photo-input" accept="image/*,video/*" multiple style="display:none" onchange="handleFiles(event)">
+        <div class="photo-drop-icon">📷</div>
+        <div class="photo-drop-text">Toca para agregar fotos o videos</div>
+        <div class="photo-drop-sub">Múltiples archivos · Se subirán a Google Drive en carpeta de la visita</div>
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+      <div class="upload-note" id="upload-note"></div>
+    </div>
+    <div class="sdiv"></div>
+    <div class="stitle">Comentarios adicionales</div>
+    <div class="field"><label class="fl">Notas libres del auditor</label>
+      <textarea class="fta" id="obs_finales" style="min-height:100px"
+        placeholder="Acuerdos con el retailer, compromisos pendientes, situación especial, próximos pasos..."></textarea></div>
+    <div class="field"><label class="fl">Compromisos adquiridos con el PDV</label>
+      <textarea class="fta" id="compromisos"
+        placeholder="ej. Gerente confirmó espacio para Q2, pendiente enviar POP de ahorro..."></textarea></div>
+    <div class="field"><label class="fl">Próxima visita recomendada</label>
+      <div class="chips" id="chips-proxvisita"></div></div>
+
+    <!-- Score preview with breakdown -->
+    <div class="score-prev" style="margin-top:20px">
+      <div class="sp-top">
+        <div><div class="sp-lbl">Score total de la sucursal</div>
+          <div class="sp-sub">Ponderado sobre 100 puntos — ver desglose abajo</div></div>
+        <div class="sp-num-wrap"><span class="sp-num" id="liveScore">—</span><span class="sp-max">/100</span></div>
+      </div>
+      <div class="sp-grid" id="sp-grid-live"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="bot"><div class="bot-in">
+  <button class="btn btn-ghost" onclick="openModal()">Ver resumen</button>
+  <button class="btn btn-red" onclick="openModal()">Revisar y enviar →</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="ov" id="ov">
+  <div class="modal">
+    <div class="mhdr"><h2>Reporte Ejecutivo de Auditoría</h2>
+      <button class="mclose" onclick="closeModal()">✕</button></div>
+    <div class="mbody">
+      <div class="m-hero">
+        <div class="ring-c" id="ring-c"><div class="ring-n" id="ring-n">—</div><div class="ring-d">/100 pts</div></div>
+        <div class="m-hero-info">
+          <div class="ring-lv" id="ring-lv">—</div>
+          <div class="ring-loc" id="ring-loc">—</div>
+          <div class="m-prog"><div class="m-prog-fill" id="m-prog-fill"></div></div>
+        </div>
+      </div>
+      <div class="msec"><div class="msec-t">Desglose por categoría</div><div class="sc-grid" id="mCats"></div></div>
+      <div class="msec"><div class="msec-t">Indicadores clave</div><div class="kpi-row" id="mKPIs"></div></div>
+      <div class="msec"><div class="msec-t">Diagnóstico estratégico</div>
+        <div class="m-concl"><h4>Conclusión</h4><p id="mConclusion"></p></div></div>
+      <div class="msec"><div class="msec-t">Acciones prioritarias inmediatas</div>
+        <div class="action-cards" id="mRecos"></div></div>
+      <div class="msec" id="mNextVisit" style="margin-bottom:16px">
+      <div class="msec-t">Recomendación de seguimiento</div>
+      <div style="background:#F8F9FB;border:1px solid var(--border);border-radius:9px;padding:13px;font-size:12px;color:var(--soft);line-height:1.7" id="mNextVisitText"></div>
+    </div>
+    <div class="mact">
+        <button class="btn btn-ghost" style="flex:0 0 auto;padding:14px 18px" onclick="closeModal()">Editar</button>
+        <button class="btn btn-green" id="sendBtn" onclick="openEmailModal()">Enviar por correo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxDUPPqFj3SXGzeEgrAO2N9Wu5C08fgKIwY4-UsSM1-cFU0QJaDB3S-Tlbyb84JI-BW1A/exec';
+
+/* ═══════ RETAILERS POR PAÍS ═══════ */
+const PAIS_DATA = {
+  panama: {
+    retailers: {
+      'Rodelag': ['Albrook Mall','Multiplaza','Metromall','Costa del Este','David','Santiago','Chitré','Colón','Penonomé','Otro'],
+      'Otro': ['__otro__']
+    }
+  },
+  costarica: {
+    retailers: {
+      'Novex': ['San José Centro','Escazú','Cartago','Heredia','Alajuela','Otro'],
+      'Otro': ['__otro__']
+    }
+  },
+  elsalvador: {
+    retailers: {
+      'Lemus': ['Lemus San Salvador','Lemus Santa Ana','Lemus Soyapango','Otro'],
+      'Siman': ['Metrocentro','Galerías','Multiplaza','Santa Ana','Otro'],
+      'Otro': ['__otro__']
+    }
+  },
+  guatemala: {
+    retailers: { 'Otro': ['__otro__'] }
+  },
+  otro: {
+    retailers: { 'Otro': ['__otro__'] }
+  }
+};
+
+function onPais() {
+  const val = document.getElementById('pais').value;
+  document.getElementById('wrap-otro-pais').style.display = val==='otro' ? 'block' : 'none';
+  // Reset retailer
+  const retSel = document.getElementById('retailer');
+  retSel.innerHTML = '<option value="">Selecciona</option>';
+  document.getElementById('wrap-otro-retailer').style.display = 'none';
+  // Reset sucursal
+  document.getElementById('sucursal_sel').innerHTML = '<option value="">Selecciona retailer primero</option>';
+  document.getElementById('wrap-otra-sucursal').style.display = 'none';
+  if (!val || !PAIS_DATA[val]) return;
+  Object.keys(PAIS_DATA[val].retailers).forEach(r => {
+    const o = document.createElement('option');
+    o.value = r; o.textContent = r; retSel.appendChild(o);
+  });
+  update();
+}
+
+function onRetailer() {
+  const pais = document.getElementById('pais').value;
+  const ret = document.getElementById('retailer').value;
+  const isOtro = ret === 'Otro';
+  document.getElementById('wrap-otro-retailer').style.display = isOtro ? 'block' : 'none';
+  // Reset sucursal
+  const sucSel = document.getElementById('sucursal_sel');
+  sucSel.innerHTML = '<option value="">Selecciona</option>';
+  document.getElementById('wrap-otra-sucursal').style.display = 'none';
+  if (!pais || !ret || !PAIS_DATA[pais]) return;
+  const sucList = PAIS_DATA[pais].retailers[ret] || ['__otro__'];
+  sucList.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s==='__otro__' ? 'Escribir nombre...' : s;
+    sucSel.appendChild(o);
+  });
+  update();
+}
+
+function onSucursal() {
+  const val = document.getElementById('sucursal_sel').value;
+  document.getElementById('wrap-otra-sucursal').style.display = (val==='Otro'||val==='__otro__') ? 'block' : 'none';
+  update();
+}
+
+/* ═══════ TOGGLE SECCIONES — INDEPENDIENTES ═══════
+   Cada sección se abre/cierra sola. No cierra las demás.
+   La primera arranca abierta. */
+function tog(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+  updateProg();
+}
+
+/* ═══════ CHIPS ═══════ */
+const CHIPS_CFG = {
+  'chips-trafico':   {r:true,  o:['Bajo','Medio','Alto','Muy alto']},
+  'chips-ubic':      {r:true,  o:['Entrada','Flujo principal','Zona secundaria','Esquina','Zona fría','Escondido']},
+  'chips-compvis':   {r:true,  o:['TCL','Samsung','LG','Midea','Hisense','RCA','Sankey','Panonic','Mystic','Otra']},
+  'chips-exhib':     {r:false, o:['Limpio y ordenado','Golpeado','Deteriorado','Cables visibles','Ilum. dañada','Sin etiquetas','POP dañado','Productos faltantes','Incompleto']},
+  'chips-demo':      {r:true,  o:['Sí, varios encendidos','Alguno','Ninguno']},
+  'chips-sticker':   {r:true,  o:['Sí, todos','Solo algunos','No tienen']},
+  'chips-pop':       {r:false, o:['Precio visible','Cuotas','QR','Stoppers','Wobblers','Cenefas','Mat. ahorro','Mat. WiFi/IA','Pantalla/video','Mat. garantía','Nada']},
+  'chips-benefit':   {r:true,  o:['Ahorro energético','WiFi/IA','Precio','Garantía','Diseño','Inverter','BTU','Nada claro']},
+  'chips-qr':        {r:true,  o:['Sí y funciona','Sí pero no carga','No hay QR']},
+  'chips-marcas':    {r:false, o:['Samsung','LG','Hisense','RCA','Sankey','Panonic','Mystic','Midea','Panasonic','Otra']},
+  'chips-cventaja':  {r:false, o:['Más espacio','Mejor precio','Mejor financiamiento','Promotor fijo','Mejor POP','Mejor ubicación','Más stock','Mejor servicio','Más conocida','Mejor iluminación']},
+  'chips-cprom':     {r:false, o:['Cashback','Cuotas sin interés','Instalación gratis','Descuento directo','Garantía extendida','Combo','No visible']},
+  'chips-detiene':   {r:true,  o:['Sí, bastante','Poco','Casi no']},
+  'chips-tiempo':    {r:true,  o:['Menos de 15 seg','15-30 seg','30s-1 min','Más de 1 min']},
+  'chips-atrac':     {r:false, o:['Precio','Diseño','WiFi/IA','Ahorro','Garantía','Inverter','BTU','Nada']},
+  'chips-toca':      {r:true,  o:['Sí, varios','Algunos','Casi no']},
+  'chips-vrec':      {r:true,  o:['Sí, primero','A veces','Recomienda otra marca','No menciona TCL']},
+  'chips-vsabe':     {r:false, o:['Inverter','WiFi','IA/Autolimpieza','BTU/metraje','Ahorro energético','Garantía','Instalación','Diferencia líneas TCL']},
+  'chips-pricing':   {r:false, o:['Precio visible','Cuotas visibles','Promo activa','Ahorro comunicado','Financiamiento destacado','Precio desactualizado','Error de precio']},
+  'chips-stock':     {r:true,  o:['Completo','Parcial','Sin stock']},
+  'chips-obj':       {r:false, o:['No conocen TCL','Precio alto','Prefieren LG','Prefieren Samsung','Prefieren Panasonic','No entienden inverter','Dudan de garantía','Sin stock','Sin instalación','Mala exp. previa','Prefieren RCA/Sankey']},
+  'chips-motivos':   {r:false, o:['Precio','Ahorro energético','WiFi/IA','Tecnología','Garantía','Diseño','Disponibilidad','Financiamiento','Recomendación vendedor']},
+  'chips-act':       {r:false, o:['Promotor fin de semana','Capacitación express','POP adicional','Demo de producto','Reubicar exhibidor','Pantalla con video','Campaña QR/leads','Activación con premio']},
+  'chips-proxvisita':{r:true,  o:['En 1 semana','En 2 semanas','En 1 mes','En 2 meses']},
+  'chips-regalias':      {r:true,  o:['Sí, disponibles','Pocas / limitadas','No hay regalías']},
+  'chips-regalias-tipo': {r:false, o:['Camisas TCL','Gorras TCL','Lapiceros','Bolsas','Calendarios','Llaveros','Termos','Otro']},
+  'chips-brochures':     {r:true,  o:['Sí, en cantidad','Pocas unidades','No hay brochures']},
+  'chips-brochures-series':{r:false,o:['SaveIN AI','BreezeIN AI','Elite AI','Línea On/Off','Catálogo completo']},
+  'chips-brochures-estado':{r:true, o:['Actualizados y en buen estado','Desactualizados','Dañados / arrugados']},
+};
+
+const CS = {};
+Object.keys(CHIPS_CFG).forEach(k => { CS[k] = CHIPS_CFG[k].r ? '' : []; });
+
+function buildChips() {
+  Object.entries(CHIPS_CFG).forEach(([id, cfg]) => {
+    const w = document.getElementById(id); if (!w) return;
+    w.innerHTML = '';
+    cfg.o.forEach(opt => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = opt;
+      b.onclick = () => {
+        if (cfg.r) { CS[id] = CS[id]===opt ? '' : opt; }
+        else { CS[id] = CS[id].includes(opt) ? CS[id].filter(x=>x!==opt) : [...CS[id], opt]; }
+        renderChips(id, cfg); calcScore(); updateProg();
+      };
+      w.appendChild(b);
+    });
+  });
+}
+
+function renderChips(id, cfg) {
+  const w = document.getElementById(id); if (!w) return;
+  w.querySelectorAll('.chip').forEach(b => {
+    const sel = cfg.r ? CS[id]===b.textContent : CS[id].includes(b.textContent);
+    b.className = 'chip' + (sel ? (cfg.r ? ' sr' : ' sm') : '');
+  });
+}
+
+function gc(id) { const v=CS[id]; return Array.isArray(v)?v.join(', '):(v||''); }
+
+/* ═══════ SLIDERS ═══════ */
+function sl(rid, did) {
+  const v = parseInt(document.getElementById(rid).value);
+  const el = document.getElementById(did);
+  el.textContent = v;
+  const pct = ((v-1)/9)*100;
+  const col = v>=8?'#16A34A':v>=6?'#D97706':v>=4?'#EA580C':'#DC2626';
+  el.style.color = col;
+  document.getElementById(rid).style.background =
+    `linear-gradient(to right,${col} ${pct}%,rgba(0,0,0,0.08) ${pct}%)`;
+  calcScore();
+}
+
+function initRanges() {
+  document.querySelectorAll('input[type=range]').forEach(r => {
+    const v=parseInt(r.value), pct=((v-1)/9)*100;
+    const col=v>=8?'#16A34A':v>=6?'#D97706':v>=4?'#EA580C':'#DC2626';
+    r.style.background=`linear-gradient(to right,${col} ${pct}%,rgba(0,0,0,0.08) ${pct}%)`;
+    const dl=document.getElementById('d_'+r.id);
+    if(dl){dl.textContent=v;dl.style.color=col;}
+  });
+}
+
+/* ═══════ SOS ═══════ */
+let sosN = 0;
+function addSOS() {
+  sosN++;
+  const row = document.createElement('div');
+  row.className = 'sos-custom-row'; row.id = 'sos-row-'+sosN;
+  row.innerHTML = `<input class="fi brand-name" type="text" placeholder="Nombre de la marca" id="sos_bn_${sosN}" oninput="calcSOS()">
+    <input class="fi brand-qty" type="number" min="0" value="0" id="sos_bq_${sosN}" oninput="calcSOS()">
+    <button type="button" onclick="document.getElementById('sos-row-${sosN}').remove();calcSOS()" style="padding:9px 12px;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);border-radius:8px;color:#DC2626;font-weight:700;cursor:pointer;font-size:14px">×</button>`;
+  document.getElementById('sos-extra').appendChild(row);
+}
+
+function calcSOS() {
+  const fixed = ['sos_tcl','sos_samsung','sos_lg','sos_midea','sos_hisense','sos_rca','sos_sankey','sos_panonic','sos_mystic','sos_panasonic'];
+  const tcl = parseInt(document.getElementById('sos_tcl').value)||0;
+  let tot = fixed.reduce((a,id)=>a+(parseInt(document.getElementById(id).value)||0),0);
+  for(let i=1;i<=sosN;i++){const el=document.getElementById('sos_bq_'+i);if(el)tot+=parseInt(el.value)||0;}
+  if(!tot){document.getElementById('sos-pct').textContent='—';document.getElementById('sos-lv').textContent='Ingresa datos';return;}
+  const pct=(tcl/tot*100).toFixed(1);
+  document.getElementById('sos-pct').textContent=pct+'%';
+  document.getElementById('sos-lv').textContent=pct>=35?'Share ALTO — TCL lidera':pct>=20?'Share MEDIO — hay espacio para crecer':'Share BAJO — acción urgente requerida';
+}
+
+/* ═══════ PHOTOS ═══════ */
+const mediaFiles=[];
+function handleFiles(e){
+  Array.from(e.target.files).forEach(file=>{
+    const idx=mediaFiles.length;
+    mediaFiles.push(file);
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const div=document.createElement('div');div.className='photo-thumb';
+      const isVid=file.type.startsWith('video/');
+      div.innerHTML=isVid
+        ?`<video src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover"></video><button class="photo-del" onclick="removeMedia(${idx})">×</button>`
+        :`<img src="${ev.target.result}" alt=""><button class="photo-del" onclick="removeMedia(${idx})">×</button>`;
+      document.getElementById('photo-grid').appendChild(div);
+      document.getElementById('upload-note').textContent=mediaFiles.filter(Boolean).length+' archivo(s) listo(s) para subir a Drive';
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value='';
+}
+function removeMedia(idx){
+  mediaFiles[idx]=null;
+  const thumbs=document.getElementById('photo-grid').children;
+  if(thumbs[idx])thumbs[idx].style.opacity='0.3';
+  const cnt=mediaFiles.filter(Boolean).length;
+  document.getElementById('upload-note').textContent=cnt?cnt+' archivo(s) listo(s)':'';
+}
+function fileToB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);})}
+
+/* ═══════ SCORING ═══════
+  Visibilidad  15pts  avg(v1-v5)/10 × 15
+  Exhibidor    10pts  avg(e1-e4)/10 × 10
+  POP          10pts  avg(p1-p3)/10 × 10
+  Competencia  10pts  comp_s/10 × 10
+  Cliente      10pts  avg(cl1,cl2)/10 × 10
+  Vendedor     20pts  avg(vn1-vn3)/10 × 20
+  Precio       15pts  pr1/10 × 15
+  Total                              100 pts
+═══════ */
+function rv(id){return parseFloat((document.getElementById(id)||{value:5}).value)||5;}
+function avgS(...ids){return ids.reduce((a,b)=>a+rv(b),0)/ids.length;}
+
+function calcScore(){
+  const vis  =avgS('v1','v2','v3','v4','v5');
+  const exhib=avgS('e1','e2','e3','e4');
+  const pop  =avgS('p1','p2','p3');
+  const comp =rv('comp_s');
+  const cli  =avgS('cl1','cl2');
+  const vend =avgS('vn1','vn2','vn3');
+  const pric =rv('pr1');
+  const pts={
+    vis:  Math.round((vis/10)*15),
+    exhib:Math.round((exhib/10)*10),
+    pop:  Math.round((pop/10)*10),
+    comp: Math.round((comp/10)*10),
+    cli:  Math.round((cli/10)*10),
+    vend: Math.round((vend/10)*20),
+    pric: Math.round((pric/10)*15),
+  };
+  const total=Object.values(pts).reduce((a,b)=>a+b,0);
+  const col=total>=85?'#16A34A':total>=70?'#D97706':total>=50?'#EA580C':'#DC2626';
+  const ls=document.getElementById('liveScore');
+  if(ls){ls.textContent=total;ls.style.color=col;}
+  document.getElementById('hScore').textContent=total;
+  document.getElementById('hScore').style.color=col;
+  // Mini grid
+  const cats=[['Vis',pts.vis,15],['Exhib',pts.exhib,10],['POP',pts.pop,10],['Comp',pts.comp,10],['Cliente',pts.cli,10],['Vend',pts.vend,20],['Precio',pts.pric,15]];
+  const sg=document.getElementById('sp-grid-live');
+  if(sg) sg.innerHTML=cats.map(([n,p,mx])=>{const c=p>=mx*0.8?'#16A34A':p>=mx*0.5?'#D97706':'#DC2626';
+    return `<div class="sp-cat"><div class="sp-cat-n">${n}</div><div class="sp-cat-v" style="color:${c}">${p}<span style="color:var(--muted);font-size:9px;font-weight:400">/${mx}</span></div></div>`}).join('');
+  return{vis,exhib,pop,comp,cli,vend,pric,total,pts};
+}
+
+/* ═══════ PROGRESS ═══════ */
+function updateProg(){
+  const ok=[
+    g('pais')&&g('auditor')&&document.getElementById('retailer').value,
+    rv('v1')!==5||rv('v2')!==5,
+    CS['chips-exhib'].length>0,
+    CS['chips-pop'].length>0,
+    parseInt(document.getElementById('sos_tcl').value)>0,
+    CS['chips-marcas'].length>0,
+    gc('chips-detiene')!=='',
+    gc('chips-vrec')!=='',
+    gc('chips-stock')!=='',
+    CS['chips-obj'].length>0,
+    mediaFiles.filter(Boolean).length>0||g('obs_finales'),
+  ];
+  const done=ok.filter(Boolean).length,pct=Math.round(done/11*100);
+  document.getElementById('pgFill').style.width=pct+'%';
+  document.getElementById('pgPct').textContent=pct+'%';
+  document.getElementById('pgLbl').textContent=done+' de 11 secciones completadas';
+}
+function g(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function update(){updateProg();calcScore();}
+
+/* ═══════ HELPERS ═══════ */
+function getSucursal(){
+  const sel=document.getElementById('sucursal_sel').value;
+  if(sel==='Otro'||sel==='__otro__')return g('otra_sucursal')||'—';
+  return sel||g('otra_sucursal')||'—';
+}
+function getRetailer(){const r=document.getElementById('retailer').value;return r==='Otro'?(g('otro_retailer')||'Otro'):r;}
+function getPais(){
+  const v=document.getElementById('pais').value;
+  if(v==='otro')return g('otro_pais')||'Otro';
+  const t={panama:'Panamá',costarica:'Costa Rica',elsalvador:'El Salvador',guatemala:'Guatemala'};
+  return t[v]||v;
+}
+
+/* ═══════ CONCLUSIÓN ═══════ */
+function genConclusion(sc){
+  const suc=getSucursal(),ret=getRetailer(),pais=getPais();
+  const lvl=sc.total>=85?'ALTO':sc.total>=70?'MEDIO-ALTO':sc.total>=50?'MEDIO':'BAJO';
+  const rating=sc.total>=85?'Excelente':sc.total>=70?'Bueno':sc.total>=50?'Regular':'Crítico';
+  const issues=[],ok=[];
+  if(sc.vis<6)issues.push('visibilidad de marca deficiente');else if(sc.vis>=8)ok.push('fuerte presencia visual de TCL');
+  if(sc.vend<6)issues.push('vendedor con bajo conocimiento o disposición hacia TCL');else if(sc.vend>=8)ok.push('vendedor bien alineado con TCL');
+  if(sc.pric<6)issues.push('comunicación de precio y valor por debajo del estándar');else if(sc.pric>=8)ok.push('precio bien comunicado y competitivo');
+  if(sc.comp<6)issues.push('presión competitiva alta de marcas rivales');
+  if(sc.cli<5)issues.push('escasa interacción y engagement del cliente con TCL');
+  if(sc.pop<6)issues.push('material POP insuficiente o deteriorado');
+  if(sc.exhib<6)issues.push('exhibidor por debajo del estándar de imagen TCL');
+  let txt=`La sucursal ${suc} del retailer ${ret} (${pais}) obtiene una calificación ${rating.toUpperCase()} con un score de ${sc.total}/100 puntos (potencial comercial ${lvl}). `;
+  if(ok.length)txt+=`Aspectos positivos destacados: ${ok.join(' y ')}. `;
+  if(issues.length)txt+=`Factores que están frenando la conversión: ${issues.join('; ')}. `;
+  txt+=`El nivel de urgencia de intervención es ${sc.total<50?'CRÍTICO — acción inmediata requerida':sc.total<70?'ALTO — intervención esta semana':'MODERADO — optimización programada'}.`;
+  return txt;
+}
+
+/* ═══════ ACCIONES ═══════ */
+/* ═══════ ACCIONES ═══════ */
+function genActions(sc){
+  // Build context-aware actions based on all form data
+  const compDom   = gc('chips-compvis');
+  const sosPct    = parseFloat(document.getElementById('sos-pct').textContent)||0;
+  const vendSabe  = gc('chips-vsabe');
+  const vendObj   = g('vend_obj');
+  const popItems  = gc('chips-pop');
+  const objs      = gc('chips-obj');
+  const stockSt   = gc('chips-stock');
+  const regalias  = gc('chips-regalias');
+  const brochures = gc('chips-brochures');
+
+  // Build specific training topics
+  const trainTopics=[];
+  if(!vendSabe.includes('Inverter'))     trainTopics.push('beneficios del inverter vs on/off y ahorro mensual en kWh');
+  if(!vendSabe.includes('WiFi'))         trainTopics.push('funciones WiFi: control remoto desde la app TCL Home');
+  if(!vendSabe.includes('IA'))           trainTopics.push('tecnología IA y autolimpieza: diferencial premium de TCL');
+  if(!vendSabe.includes('BTU'))          trainTopics.push('cálculo de BTU según metraje y orientación del ambiente');
+  if(!vendSabe.includes('Ahorro'))       trainTopics.push('comparativo de ahorro energético TCL vs convencional (cifras reales)');
+  if(!vendSabe.includes('Garantía'))     trainTopics.push('cobertura de garantía TCL y red de servicio técnico');
+  if(!vendSabe.includes('Diferencia'))   trainTopics.push('diferencias entre líneas SaveIN AI, BreezeIN AI y Elite AI');
+  if(trainTopics.length===0)trainTopics.push('profundización en objeciones avanzadas y técnicas de cierre para TCL');
+
+  // POP missing items
+  const popMissing=[];
+  if(!popItems.includes('Mat. ahorro'))  popMissing.push('stopper de ahorro energético con cifras de kWh vs convencional');
+  if(!popItems.includes('Mat. WiFi'))    popMissing.push('wobbler de funciones WiFi/IA con QR a demo en video');
+  if(!popItems.includes('Precio'))       popMissing.push('etiqueta de precio actualizada con precio de contado y cuotas');
+  if(!popItems.includes('QR'))           popMissing.push('código QR funcional que enlace a catálogo digital TCL');
+  if(!popItems.includes('Cuotas'))       popMissing.push('sticker de cuotas con banco/financiera y monto mensual');
+  if(!popItems.includes('Mat. garantía'))popMissing.push('cenefa de garantía TCL con número de servicio técnico');
+  if(popMissing.length===0)popMissing.push('revisar actualización de materiales existentes con info de temporada');
+
+  // Competition counter-actions
+  const compActions=[];
+  if(sosPct<20){
+    compActions.push(`negociar con el gerente de piso ampliar el espacio TCL: actualmente TCL tiene solo ~${sosPct}% del lineal, el objetivo mínimo es 25%`);
+    compActions.push(`solicitar ubicación contigua a ${compDom||'la marca dominante'} para capturar tráfico de su exhibidor`);
+  }
+  if(sc.comp<6){
+    compActions.push(`instalar stopper comparativo TCL vs ${compDom||'competencia'}: precio, BTU, garantía y tecnología WiFi en un mismo visual`);
+    compActions.push('activar promotor TCL en fin de semana de mayor tráfico para contrarrestar presencia de promotores rivales');
+  }
+
+  const nextVisit=gc('chips-proxvisita')||'En 2 semanas';
+  const proxFecha=g('fecha')||'próxima semana';
+
+  const all=[
+    // CAPACITACIÓN
+    {s:sc.vend, pri:'P1',cat:'Capacitación urgente',urg:'Inmediata (esta semana)',
+     title:'Capacitación express al equipo de ventas',
+     bullets:[
+       `Duración recomendada: 45-60 minutos en tienda, sin interrumpir operación`,
+       `Temas específicos a cubrir: ${trainTopics.slice(0,3).join('; ')}`,
+       vendObj?`Manejar las objeciones detectadas: "${vendObj.slice(0,120)}"`:'Construir script de respuesta a las 5 objeciones más comunes sobre TCL',
+       `Dejar material impreso: guía rápida de argumentos SaveIN AI vs BreezeIN AI vs Elite AI`,
+       `Siguiente paso: evaluación de conocimiento en la próxima visita (${nextVisit})`
+     ]},
+    // VISIBILIDAD
+    {s:sc.vis, pri:'P1',cat:'Exhibición y visibilidad',urg:'Esta semana',
+     title:'Reforzar visibilidad y ubicación del exhibidor',
+     bullets:[
+       `Objetivo: TCL debe ser visible desde la entrada de la tienda a 5+ metros`,
+       `Acción inmediata: verificar con gerente de piso la posibilidad de reubicar el exhibidor al flujo principal`,
+       `Revisar iluminación: si la luz no enfoca TCL, solicitar reenfoque o instalar spot LED adicional`,
+       `Asegurar que el logo TCL sea el primer elemento visible al acercarse a la categoría A/C`,
+       `Fotografiar la vista desde la entrada y comparar con el estándar de imagen corporativa TCL`
+     ]},
+    // POP
+    {s:sc.pop, pri:'P2',cat:'Material POP',urg:'En los próximos 5 días',
+     title:'Instalar y/o reponer material POP faltante',
+     bullets:[
+       `Materiales prioritarios a instalar: ${popMissing.slice(0,3).join('; ')}`,
+       regalias==='Sí, disponibles'?'Aprovechar las regalías disponibles en tienda para ofrecer como incentivo de cierre':'Gestionar con el equipo de marketing el envío de regalías/incentivos para el PDV',
+       brochures==='No hay brochures'?'Solicitar urgente el envío de brochures de líneas SaveIN AI y BreezeIN AI para dejar con clientes potenciales':'Verificar que los brochures disponibles estén actualizados con precios y especificaciones vigentes',
+       `Asegurar que cada equipo exhibido tenga su etiqueta de precio, cuotas y al menos 1 beneficio clave visible`,
+       `Instalar QR funcional en zona de mayor visibilidad con CTA "Escanea y conoce tu ahorro mensual"`
+     ]},
+    // COMPETENCIA / SOS
+    {s:sc.comp, pri:'P2',cat:'Acción competitiva',urg:`En ${nextVisit.toLowerCase()}`,
+     title:`Recuperar terreno frente a ${compDom||'la competencia dominante'}`,
+     bullets:compActions.length?compActions:[
+       `Implementar comparativo visual TCL vs ${compDom||'marca líder'} en el punto de mayor tráfico`,
+       'Solicitar al gerente de tienda espacio adicional o mejor posicionamiento del exhibidor TCL',
+       'Activar promotor TCL en el fin de semana de mayor afluencia para capturar clientes activos'
+     ]},
+    // STOCK
+    {s:sc.pric, pri:'P3',cat:'Precio y stock',urg:`En ${nextVisit.toLowerCase()}`,
+     title:'Optimizar comunicación de precio y disponibilidad',
+     bullets:[
+       stockSt==='Sin stock'?`URGENTE: el modelo más consultado (${g('stock_top')||'por definir'}) no tiene stock — coordinar con logística reposición inmediata`:`Verificar que los modelos disponibles (${g('stock_disp')||'por confirmar'}) estén correctamente etiquetados`,
+       `Hacer visible el precio de cuotas en cada equipo: "Desde $XX/mes" es más persuasivo que el precio total`,
+       `Agregar comparativo de ahorro energético mensual junto al precio: "Ahorra $X al mes vs un equipo convencional"`,
+       g('instalacion')&&g('instalacion').toLowerCase().includes('no')?'Gestionar opción de instalación: este PDV no ofrece instalación, lo cual es una barrera de cierre — coordinar con distribuidor':'Visibilizar el servicio de instalación: tiempo de entrega y costo en la etiqueta de precio'
+     ]},
+    // CLIENTE
+    {s:sc.cli, pri:'P3',cat:'Experiencia del cliente',urg:'En 1 mes',
+     title:'Mejorar interacción y engagement del cliente con TCL',
+     bullets:[
+       'Asegurar que al menos 2 equipos TCL estén encendidos y en modo demo durante el horario de mayor tráfico',
+       'Simplificar el mensaje visual: máximo 3 beneficios por equipo, en tipografía grande y legible',
+       'Instalar demo interactiva: tablet o pantalla con video de 60 segundos mostrando función WiFi e IA',
+       'Colocar QR en zona de espera o caja para capturar leads: "Consulta tu ahorro mensual con TCL"',
+       `Próxima visita (${nextVisit}): medir si el tiempo de interacción mejoró vs ${g('fecha')||'esta auditoría'}`
+     ]},
+  ];
+
+  return all.sort((a,b)=>a.s-b.s).slice(0,5).map((a,i)=>{
+    const cls=['p1','p1','p2','p2','p3'][i]||'p3';
+    const bullets=a.bullets.map(b=>`<li style="margin-bottom:5px;font-size:11px;color:var(--soft);line-height:1.55">${b}</li>`).join('');
+    return `<div class="a-card">
+      <div class="a-num ${cls}" style="width:34px;height:34px;border-radius:9px;font-size:11px">${i+1}</div>
+      <div class="a-body">
+        <div class="a-title" style="font-size:13px">${a.title}</div>
+        <ul style="padding-left:14px;margin-top:6px">${bullets}</ul>
+        <div class="a-tags" style="margin-top:7px"><span class="a-tag cat">${a.cat}</span><span class="a-tag urg">${a.urg}</span></div>
+      </div></div>`;
+  }).join('');
+}
+
+/* ═══════ MODAL ═══════ */
+/* ═══════ MODAL ═══════ */
+function openModal(){
+  const sc=calcScore();
+  const lv=sc.total>=85?{l:'Excelente',c:'#16A34A'}:sc.total>=70?{l:'Bueno',c:'#D97706'}:sc.total>=50?{l:'Regular',c:'#EA580C'}:{l:'Crítico',c:'#DC2626'};
+  document.getElementById('ring-n').textContent=sc.total;
+  document.getElementById('ring-n').style.color=lv.c;
+  document.getElementById('ring-lv').textContent=lv.l;
+  document.getElementById('ring-lv').style.color=lv.c;
+  document.getElementById('ring-c').style.borderColor=lv.c;
+  document.getElementById('ring-c').style.background=lv.c+'15';
+  document.getElementById('m-prog-fill').style.width=sc.total+'%';
+  document.getElementById('m-prog-fill').style.background=lv.c;
+  document.getElementById('ring-loc').innerHTML=`<strong>${getSucursal()}</strong> · ${getRetailer()} · ${getPais()}<br>${g('auditor')} · ${g('fecha')} · ${g('hora')}`;
+
+  const W={vis:15,exhib:10,pop:10,comp:10,cli:10,vend:20,pric:15};
+  const N={vis:'Visibilidad',exhib:'Exhibidor',pop:'POP / Comunicación',comp:'Competencia',cli:'Cliente',vend:'Vendedor',pric:'Precio & Stock'};
+  document.getElementById('mCats').innerHTML=Object.entries(N).map(([k,n])=>{
+    const raw=sc[k],pts=sc.pts[k],mx=W[k];
+    const col=raw>=8?'#16A34A':raw>=6?'#D97706':raw>=4?'#EA580C':'#DC2626';
+    return `<div class="sc-card"><div class="sc-card-name">${n} <span style="float:right;font-size:8px;color:var(--muted);font-weight:400">peso ${mx}pts</span></div>
+      <div class="sc-bar-t"><div class="sc-bar-f" style="width:${raw*10}%;background:${col}"></div></div>
+      <div class="sc-bottom"><span class="sc-val" style="color:${col}">${raw.toFixed(1)}/10</span><span class="sc-pts">${pts}/${mx} pts</span></div></div>`;
+  }).join('');
+
+  document.getElementById('mKPIs').innerHTML=[
+    ['Share of Shelf TCL', document.getElementById('sos-pct').textContent],
+    ['Marca dominante', gc('chips-compvis')||'—'],
+    ['Stock', gc('chips-stock')||'—'],
+    ['Vendedor recomienda', gc('chips-vrec')||'—'],
+    ['Tráfico', gc('chips-trafico')||'—'],
+    ['Próxima visita', gc('chips-proxvisita')||'—'],
+  ].map(([l,v])=>`<div class="kpi-box"><div class="kpi-label">${l}</div><div class="kpi-val">${v}</div></div>`).join('');
+
+  document.getElementById('mConclusion').textContent=genConclusion(sc);
+  document.getElementById('mRecos').innerHTML=genActions(sc);
+  // Next visit recommendation
+  const nv=gc('chips-proxvisita')||'En 2 semanas';
+  const compromisos=g('compromisos');
+  let nvText=`Se recomienda la próxima visita de seguimiento <strong>${nv}</strong> a partir del <strong>${g('fecha')||'cierre de esta auditoría'}</strong>. `;
+  if(sc.total<50)nvText+=`Por el nivel CRÍTICO obtenido (${sc.total}/100), se recomienda visita correctiva <strong>en menos de 7 días</strong> para validar implementación de acciones urgentes. `;
+  else if(sc.total<70)nvText+=`Con el nivel ${sc.total>=50?'REGULAR':'BAJO'} obtenido, es clave verificar en la próxima visita que se hayan ejecutado las acciones prioritarias (capacitación, POP, visibilidad). `;
+  else nvText+=`El buen desempeño permite un ciclo estándar de seguimiento. Validar en la próxima visita el impacto en ventas y share of shelf. `;
+  if(compromisos)nvText+=`<br><strong>Compromisos pendientes a verificar:</strong> ${compromisos}`;
+  document.getElementById('mNextVisitText').innerHTML=nvText;
+  const btn=document.getElementById('sendBtn');
+  btn.disabled=false;btn.textContent='Enviar a gerencia';btn.className='btn btn-green';
+  document.getElementById('ov').classList.add('show');
+}
+function closeModal(){document.getElementById('ov').classList.remove('show');}
+
+/* ═══════ SEND ═══════ */
+async function sendAudit(){
+  if(!g('pais')||!g('auditor')||!document.getElementById('retailer').value){
+    showToast('Completa los datos generales primero');closeModal();return;
+  }
+  if(GAS_URL==='https://script.google.com/macros/s/AKfycbxDUPPqFj3SXGzeEgrAO2N9Wu5C08fgKIwY4-UsSM1-cFU0QJaDB3S-Tlbyb84JI-BW1A/exec'){showToast('Configura la URL del Apps Script');return;}
+  const btn=document.getElementById('sendBtn');btn.disabled=true;btn.textContent='Enviando...';
+  const sc=calcScore(),lv=sc.total>=85?'Excelente':sc.total>=70?'Bueno':sc.total>=50?'Regular':'Crítico';
+  const folder=`${getSucursal()}_${getRetailer()}_${g('fecha')}`;
+  // Custom SOS
+  const customSOS=[];
+  for(let i=1;i<=sosN;i++){const bn=document.getElementById('sos_bn_'+i);const bq=document.getElementById('sos_bq_'+i);if(bn&&bq&&bn.value)customSOS.push(`${bn.value}:${bq.value||0}`);}
+  const data={
+    action:'audit',folder,timestamp:new Date().toISOString(),
+    fecha:g('fecha'),hora:g('hora'),auditor:g('auditor'),
+    pais:getPais(),ciudad:g('ciudad'),retailer:getRetailer(),sucursal:getSucursal(),
+    tipo_visita:g('tipo_visita'),trafico:gc('chips-trafico'),zona_tcl:g('zona_tcl'),num_vendedores:g('num_vendedores'),
+    vis_lejos:rv('v1'),vis_flujo:rv('v2'),vis_logos:rv('v3'),vis_ilum:rv('v4'),vis_brand:rv('v5'),
+    vis_ubicacion:gc('chips-ubic'),comp_visual:gc('chips-compvis'),obs_vis:g('obs_vis'),
+    score_vis:sc.vis.toFixed(2),pts_vis:sc.pts.vis,
+    exhib_checklist:gc('chips-exhib'),exhib_demo:gc('chips-demo'),exhib_sticker:gc('chips-sticker'),
+    exhib_e1:rv('e1'),exhib_e2:rv('e2'),exhib_e3:rv('e3'),exhib_e4:rv('e4'),
+    score_exhib:sc.exhib.toFixed(2),pts_exhib:sc.pts.exhib,
+    pop_materiales:gc('chips-pop'),pop_benefit:gc('chips-benefit'),pop_qr:gc('chips-qr'),
+    pop_p1:rv('p1'),pop_p2:rv('p2'),pop_p3:rv('p3'),pop_msg:g('pop_msg'),
+    score_pop:sc.pop.toFixed(2),pts_pop:sc.pts.pop,
+    sos_tcl:document.getElementById('sos_tcl').value,
+    sos_samsung:document.getElementById('sos_samsung').value,
+    sos_lg:document.getElementById('sos_lg').value,
+    sos_midea:document.getElementById('sos_midea').value,
+    sos_hisense:document.getElementById('sos_hisense').value,
+    sos_rca:document.getElementById('sos_rca').value,
+    sos_sankey:document.getElementById('sos_sankey').value,
+    sos_panonic:document.getElementById('sos_panonic').value,
+    sos_mystic:document.getElementById('sos_mystic').value,
+    sos_panasonic:document.getElementById('sos_panasonic').value,
+    sos_custom:customSOS.join(' | '),sos_pct:document.getElementById('sos-pct').textContent,ml_tcl:g('ml_tcl'),
+    comp_marcas:gc('chips-marcas'),comp_ventajas:gc('chips-cventaja'),comp_proms:gc('chips-cprom'),
+    comp_presion:rv('comp_s'),obs_comp:g('obs_comp'),score_comp:sc.comp.toFixed(2),pts_comp:sc.pts.comp,
+    cli_detiene:gc('chips-detiene'),cli_tiempo:gc('chips-tiempo'),cli_atrac:gc('chips-atrac'),cli_toca:gc('chips-toca'),
+    cli_cl1:rv('cl1'),cli_cl2:rv('cl2'),score_cli:sc.cli.toFixed(2),pts_cli:sc.pts.cli,
+    vend_rec:gc('chips-vrec'),vend_sabe:gc('chips-vsabe'),vend_modelo:g('vend_modelo'),
+    vend_prefer:g('vend_prefer'),vend_obj:g('vend_obj'),vend_info:g('vend_info'),
+    vend_vn1:rv('vn1'),vend_vn2:rv('vn2'),vend_vn3:rv('vn3'),score_vend:sc.vend.toFixed(2),pts_vend:sc.pts.vend,
+    pricing:gc('chips-pricing'),pr1:rv('pr1'),stock_disp:gc('chips-stock'),
+    stock_disponible:g('stock_disp'),stock_agotado:g('stock_ago'),stock_top:g('stock_top'),instalacion:g('instalacion'),
+    score_pric:sc.pric.toFixed(2),pts_pric:sc.pts.pric,
+    objeciones:gc('chips-obj'),obj_principal:g('obj_principal'),
+    motivos:gc('chips-motivos'),activaciones:gc('chips-act'),act_zona:g('act_zona'),
+    amb_a1:rv('a1'),amb_a2:rv('a2'),amb_a3:rv('a3'),
+    proxima_visita:gc('chips-proxvisita'),obs_finales:g('obs_finales'),compromisos:g('compromisos'),
+    regalias:gc('chips-regalias'),regalias_tipo:gc('chips-regalias-tipo'),regalias_qty:g('regalias_qty'),
+    brochures:gc('chips-brochures'),brochures_series:gc('chips-brochures-series'),brochures_estado:gc('chips-brochures-estado'),
+    score_total:sc.total,nivel:lv,conclusion:genConclusion(sc),
+    acciones_count:3,
+  };
+  try{
+    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    btn.textContent='Enviado correctamente';btn.style.background='#15803d';
+    showToast('Auditoría guardada en Google Sheets');
+  }catch{btn.disabled=false;btn.textContent='Enviar a gerencia';showToast('Error de red. Intenta de nuevo.');}
+}
+
+function showToast(msg,ms=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),ms);}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const now=new Date();
+  document.getElementById('fecha').value=now.toISOString().slice(0,10);
+  document.getElementById('hora').value=now.toTimeString().slice(0,5);
+  buildChips();initRanges();calcScore();updateProg();
+});
+
+/* ═══════ EMAIL MODAL ═══════ */
+const emailList = [];
+
+function openEmailModal() {
+  // Reset state
+  emailList.length = 0;
+  renderEmailChips();
+  document.getElementById('email-input').value = '';
+  document.getElementById('email-error').style.display = 'none';
+  document.getElementById('email-empty-error').style.display = 'none';
+  const btn = document.getElementById('email-send-btn');
+  btn.disabled = false;
+  btn.textContent = 'Enviar reporte';
+  btn.className = 'btn btn-green';
+  document.getElementById('emailOv').classList.add('show');
+}
+
+function closeEmailModal() {
+  document.getElementById('emailOv').classList.remove('show');
+}
+
+function handleEmailKey(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    addEmail();
+  }
+}
+
+function addEmail() {
+  const input = document.getElementById('email-input');
+  const val   = input.value.trim().replace(/,$/, '');
+  if (!val) return;
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  if (!valid) {
+    document.getElementById('email-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('email-error').style.display = 'none';
+  document.getElementById('email-empty-error').style.display = 'none';
+  if (!emailList.includes(val)) {
+    emailList.push(val);
+    renderEmailChips();
+  }
+  input.value = '';
+  input.focus();
+}
+
+function removeEmail(idx) {
+  emailList.splice(idx, 1);
+  renderEmailChips();
+}
+
+function clearEmailError() {
+  document.getElementById('email-error').style.display = 'none';
+}
+
+function renderEmailChips() {
+  const wrap = document.getElementById('email-chips-wrap');
+  wrap.innerHTML = emailList.map((em, i) => `
+    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(232,33,46,0.1);border:1px solid rgba(232,33,46,0.3);border-radius:16px;padding:4px 10px 4px 12px;font-size:12px;font-weight:500;color:var(--red)">
+      ${em}
+      <button type="button" onclick="removeEmail(${i})"
+        style="background:rgba(232,33,46,0.2);border:none;border-radius:50%;width:16px;height:16px;cursor:pointer;color:var(--red);font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">×</button>
+    </div>`).join('');
+
+  // Show placeholder if empty
+  if (!emailList.length) {
+    wrap.innerHTML = '<span style="font-size:12px;color:var(--muted);font-weight:300">Los correos aparecerán aquí...</span>';
+  }
+}
+
+async function doSendAudit() {
+  // Validate: try to add any pending input first
+  const input = document.getElementById('email-input');
+  if (input.value.trim()) addEmail();
+
+  if (!emailList.length) {
+    document.getElementById('email-empty-error').style.display = 'block';
+    return;
+  }
+
+  if (!g('pais') || !g('auditor') || !document.getElementById('retailer').value) {
+    showToast('Completa los datos generales primero');
+    closeEmailModal();
+    closeModal();
+    return;
+  }
+
+  if (GAS_URL === 'https://script.google.com/macros/s/AKfycbxDUPPqFj3SXGzeEgrAO2N9Wu5C08fgKIwY4-UsSM1-cFU0QJaDB3S-Tlbyb84JI-BW1A/exec') {
+    showToast('Configura la URL del Apps Script en el código');
+    return;
+  }
+
+  const btn = document.getElementById('email-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const sc = calcScore();
+  const lv = sc.total>=85?'Excelente':sc.total>=70?'Bueno':sc.total>=50?'Regular':'Crítico';
+  const folder = getSucursal() + '_' + getRetailer() + '_' + g('fecha');
+
+  // Collect custom SOS brands
+  const customSOS = [];
+  for (let i = 1; i <= sosN; i++) {
+    const bn = document.getElementById('sos_bn_'+i);
+    const bq = document.getElementById('sos_bq_'+i);
+    if (bn && bq && bn.value) customSOS.push(bn.value+':'+( bq.value||0));
+  }
+
+  const data = {
+    action: 'audit',
+    folder,
+    destinatarios: emailList,
+    timestamp: new Date().toISOString(),
+    fecha: g('fecha'), hora: g('hora'), auditor: g('auditor'),
+    pais: getPais(), ciudad: g('ciudad'),
+    retailer: getRetailer(), sucursal: getSucursal(),
+    tipo_visita: g('tipo_visita'), trafico: gc('chips-trafico'),
+    zona_tcl: g('zona_tcl'), num_vendedores: g('num_vendedores'),
+    vis_lejos:rv('v1'),vis_flujo:rv('v2'),vis_logos:rv('v3'),vis_ilum:rv('v4'),vis_brand:rv('v5'),
+    vis_ubicacion:gc('chips-ubic'),comp_visual:gc('chips-compvis'),obs_vis:g('obs_vis'),
+    score_vis:sc.vis.toFixed(2),pts_vis:sc.pts.vis,
+    exhib_checklist:gc('chips-exhib'),exhib_demo:gc('chips-demo'),exhib_sticker:gc('chips-sticker'),
+    exhib_e1:rv('e1'),exhib_e2:rv('e2'),exhib_e3:rv('e3'),exhib_e4:rv('e4'),
+    score_exhib:sc.exhib.toFixed(2),pts_exhib:sc.pts.exhib,
+    regalias:gc('chips-regalias'),regalias_tipo:gc('chips-regalias-tipo'),regalias_qty:g('regalias_qty'),
+    brochures:gc('chips-brochures'),brochures_series:gc('chips-brochures-series'),brochures_estado:gc('chips-brochures-estado'),
+    pop_materiales:gc('chips-pop'),pop_benefit:gc('chips-benefit'),pop_qr:gc('chips-qr'),
+    pop_p1:rv('p1'),pop_p2:rv('p2'),pop_p3:rv('p3'),pop_msg:g('pop_msg'),
+    score_pop:sc.pop.toFixed(2),pts_pop:sc.pts.pop,
+    sos_tcl:document.getElementById('sos_tcl').value,
+    sos_samsung:document.getElementById('sos_samsung').value,
+    sos_lg:document.getElementById('sos_lg').value,
+    sos_midea:document.getElementById('sos_midea').value,
+    sos_hisense:document.getElementById('sos_hisense').value,
+    sos_rca:document.getElementById('sos_rca').value,
+    sos_sankey:document.getElementById('sos_sankey').value,
+    sos_panonic:document.getElementById('sos_panonic').value,
+    sos_mystic:document.getElementById('sos_mystic').value,
+    sos_panasonic:document.getElementById('sos_panasonic').value,
+    sos_custom:customSOS.join(' | '),
+    sos_pct:document.getElementById('sos-pct').textContent,
+    ml_tcl:g('ml_tcl'),
+    comp_marcas:gc('chips-marcas'),comp_ventajas:gc('chips-cventaja'),comp_proms:gc('chips-cprom'),
+    comp_presion:rv('comp_s'),obs_comp:g('obs_comp'),
+    score_comp:sc.comp.toFixed(2),pts_comp:sc.pts.comp,
+    cli_detiene:gc('chips-detiene'),cli_tiempo:gc('chips-tiempo'),
+    cli_atrac:gc('chips-atrac'),cli_toca:gc('chips-toca'),
+    cli_cl1:rv('cl1'),cli_cl2:rv('cl2'),
+    score_cli:sc.cli.toFixed(2),pts_cli:sc.pts.cli,
+    vend_rec:gc('chips-vrec'),vend_sabe:gc('chips-vsabe'),
+    vend_modelo:g('vend_modelo'),vend_prefer:g('vend_prefer'),
+    vend_obj:g('vend_obj'),vend_info:g('vend_info'),
+    vend_vn1:rv('vn1'),vend_vn2:rv('vn2'),vend_vn3:rv('vn3'),
+    score_vend:sc.vend.toFixed(2),pts_vend:sc.pts.vend,
+    pricing:gc('chips-pricing'),pr1:rv('pr1'),
+    stock_disp:gc('chips-stock'),stock_disponible:g('stock_disp'),
+    stock_agotado:g('stock_ago'),stock_top:g('stock_top'),instalacion:g('instalacion'),
+    score_pric:sc.pric.toFixed(2),pts_pric:sc.pts.pric,
+    objeciones:gc('chips-obj'),obj_principal:g('obj_principal'),
+    motivos:gc('chips-motivos'),activaciones:gc('chips-act'),act_zona:g('act_zona'),
+    amb_a1:rv('a1'),amb_a2:rv('a2'),amb_a3:rv('a3'),
+    proxima_visita:gc('chips-proxvisita'),
+    obs_finales:g('obs_finales'),compromisos:g('compromisos'),
+    score_total:sc.total,nivel:lv,
+    conclusion:genConclusion(sc),
+  };
+
+  try {
+    // Encode as URL form data — Apps Script reads via e.parameter.data
+    const encoded = new URLSearchParams({ data: JSON.stringify(data) });
+
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body:    encoded.toString()
+    });
+
+    // no-cors means we can't read the response, so wait 3s and show success
+    setTimeout(() => {
+      btn.textContent = '✓ Enviado correctamente';
+      btn.style.background = '#15803d';
+      showToast('Reporte enviado a ' + emailList.length + ' destinatario(s)');
+      setTimeout(() => { closeEmailModal(); closeModal(); }, 2000);
+    }, 3000);
+
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = 'Enviar reporte';
+    showToast('Error: ' + err.message);
+  }
+}
+
+</script>
+
+<!-- EMAIL MODAL -->
+<div class="ov" id="emailOv" style="z-index:300">
+  <div class="modal" style="max-width:480px">
+    <div class="mhdr">
+      <h2>Enviar reporte por correo</h2>
+      <button class="mclose" onclick="closeEmailModal()">✕</button>
+    </div>
+    <div class="mbody" style="padding:22px">
+
+      <p style="font-size:12px;color:var(--soft);margin-bottom:16px;line-height:1.6">
+        Escribe los correos a los que quieres enviar el reporte. Puedes agregar varios destinatarios.
+      </p>
+
+      <!-- Email chips display -->
+      <div style="margin-bottom:12px">
+        <label class="fl">Destinatarios</label>
+        <div id="email-chips-wrap" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:8px 10px;cursor:text" onclick="document.getElementById('email-input').focus()">
+          <!-- email chips go here -->
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div style="display:flex;gap:8px;margin-bottom:6px">
+        <input class="fi" type="email" id="email-input"
+          placeholder="correo@empresa.com"
+          style="flex:1"
+          onkeydown="handleEmailKey(event)"
+          oninput="clearEmailError()">
+        <button type="button" onclick="addEmail()"
+          style="padding:10px 16px;background:var(--red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:Poppins,sans-serif;white-space:nowrap">
+          + Agregar
+        </button>
+      </div>
+
+      <p style="font-size:10px;color:var(--muted);margin-bottom:4px">
+        Presiona <strong>Enter</strong> o clic en "+ Agregar" para añadir cada correo.
+      </p>
+      <p id="email-error" style="font-size:11px;color:#DC2626;font-weight:600;display:none;margin-bottom:4px">
+        Por favor ingresa un correo válido.
+      </p>
+      <p id="email-empty-error" style="font-size:11px;color:#DC2626;font-weight:600;display:none;margin-bottom:4px">
+        Agrega al menos un correo destinatario.
+      </p>
+
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+      <!-- Send button -->
+      <div style="display:flex;gap:9px">
+        <button class="btn btn-ghost" style="flex:0 0 auto;padding:13px 17px" onclick="closeEmailModal()">Cancelar</button>
+        <button class="btn btn-green" id="email-send-btn" onclick="doSendAudit()">
+          Enviar reporte
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
